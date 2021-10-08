@@ -1,0 +1,12 @@
+{
+    "name": "stanislav-gaziev/php-project-task",
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Php\\Project\\Task\\": "src/",
+            "Php\\Project\\Task\\Tests\\": "tests/"
+        }
+    }
+}
