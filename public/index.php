@@ -19,3 +19,21 @@ $strReverted2 = $entity2->revertCharacters();
 echo $str2;
 echo "</br>";
 echo $strReverted2;
+
+echo "</br></br>";
+
+$str3 = "При-вет! ДавНо не ви-деЛись.";
+$entity3 = new Entity($str3);
+$strReverted3 = $entity3->revertCharacters();
+echo $str3;
+echo "</br>";
+echo $strReverted3;
+
+echo "</br></br>";
+
+$str4 = "Hel-lo! How are you, «Stas»? I am fi-ne. Are you?";
+$entity4 = new Entity($str4);
+$strReverted4 = $entity4->revertCharacters();
+echo $str4;
+echo "</br>";
+echo $strReverted4;

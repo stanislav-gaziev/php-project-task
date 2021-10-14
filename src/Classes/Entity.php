@@ -2,6 +2,7 @@
 
 namespace Php\Project\Task\Classes;
 
+// Указал символическое название класса Entity, подразумевая, что тут может быть некая сущность
 class Entity
 {
     private $str;
@@ -11,35 +12,46 @@ class Entity
         $this->str = $str;
     }
 
-    // Метод работает с примером из задания, то есть с подобными строками,
-    // где может присутствовать 1 знак препинания после слова и между словами имеется 1 пробел
+    // Символы, которые не входят в группу '/[a-zA-Zа-яА-ЯёЁ]/u' будут считаться разделителями
     public function revertCharacters(): string
     {
-        $sentenceParts = explode(' ', $this->str);
-        $sentencePartsCount = count($sentenceParts);
+        $chars = mb_str_split($this->str);
+        $charsCount = count($chars);
+        $result = [];
+        $word = [];
 
-        for ($i = 0; $i < $sentencePartsCount; $i += 1) {
-            $chars = mb_str_split($sentenceParts[$i]);
-            $charsCount = count($chars);
-            $offset = preg_match('/[a-zA-Zа-яА-ЯёЁ]/u', $chars[$charsCount - 1]) ? 0 : 1;
-            $countWithoutOffset = $charsCount - $offset;
-            $countHalf = ceil($countWithoutOffset / 2);
+        for ($i = 0; $i < $charsCount; $i += 1) {
+            $nextChar = $chars[$i + 1] ?? ' ';
+            $condition1 = '/[a-zA-Zа-яА-ЯёЁ]/u';
 
-            for ($j = $countWithoutOffset - 1; $j >= $countHalf; $j -= 1) {
-                $val1 = $chars[$j];
-                $valUpper1 = mb_strtoupper($val1);
-                $valLower1 = mb_strtolower($val1);
-                $val2 = $chars[$countWithoutOffset - $j - 1];
-                $valUpper2 = mb_strtoupper($val2);
-                $valLower2 = mb_strtolower($val2);
-                $condition = '/[A-ZА-ЯЁ]/u';
-                $chars[$j] = preg_match($condition, $val1) ? $valUpper2 : $valLower2;
-                $chars[$countWithoutOffset - $j - 1] = preg_match($condition, $val2) ? $valUpper1 : $valLower1;
+            if (!preg_match($condition1, $chars[$i])) {
+                $result[] = $chars[$i];
+                continue;
+            } else {
+                $word[] = $chars[$i];
             }
 
-            $sentenceParts[$i] = implode('', $chars);
+            if (!preg_match($condition1, $nextChar)) {
+                $wordCount = count($word);
+                $countHalf = ceil($wordCount / 2);
+
+                for ($j = $wordCount - 1; $j >= $countHalf; $j -= 1) {
+                    $val1 = $word[$j];
+                    $valUpper1 = mb_strtoupper($val1);
+                    $valLower1 = mb_strtolower($val1);
+                    $val2 = $word[$wordCount - $j - 1];
+                    $valUpper2 = mb_strtoupper($val2);
+                    $valLower2 = mb_strtolower($val2);
+                    $condition2 = '/[A-ZА-ЯЁ]/u';
+                    $word[$j] = preg_match($condition2, $val1) ? $valUpper2 : $valLower2;
+                    $word[$wordCount - $j - 1] = preg_match($condition2, $val2) ? $valUpper1 : $valLower1;
+                }
+
+                $result[] = implode('', $word);
+                $word = [];
+            }
         }
 
-        return implode(' ', $sentenceParts);
+        return implode('', $result);
     }
 }
